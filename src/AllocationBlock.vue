@@ -46,19 +46,13 @@ export default {
   render(h, context) {
     const { props } = context;
 
-    const onMouseOver = () => {
-      if (props.allocable && props.onMouseOver) {
-        props.onMouseOver();
-      }
-    };
-
-    const onMouseDown = () => {
+    const onMouseDown = event => {
       if (props.allocable && props.onMouseDown) {
-        props.onMouseDown();
+        props.onMouseDown(event);
       }
     }
     return (
-      <div class={classes(props)} onMouseover={onMouseOver} onMousedown={onMouseDown}>
+      <div class={classes(props)} onMousedown={onMouseDown}>
         <span class="percentage">{props.allocation.percentage}</span>
         {(props.allocable || props.selected) &&
           <div class="allocation-selection">

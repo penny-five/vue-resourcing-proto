@@ -1,19 +1,19 @@
 <template>
   <div class="project-allocation-row">
     <span class="project__name">{{ project.name }}</span>
-    <div class="allocations-wrapper">
+    <div class="allocations-wrapper"
+      ref="wrapper">
       <AllocationBlock :allocation="allocation"
         :allocable="!selected"
         :key="allocation.week"
         :selected="isSelected(index)"
-        :onMouseDown="() => onMouseDown(allocation, index)"
-        :onMouseOver="() => onMouseOver(allocation, index)"
+        :onMouseDown="event => onMouseDown(event, allocation, index)"
         v-for="(allocation, index) in visibleAllocations" />
       <AllocationSelector class="allocation-selector"
         @close="onDisbandAllocationSelector"
         @select="onSelectAllocation"
         v-if="selected"
-        :style="{ left: `${Math.min(selectionStartIndex, selectionEndIndex) * 40}px` }" />
+        :style="computeAllocationSelectorStyle(this)" />
     </div>
   
   </div>
@@ -29,6 +29,8 @@ const isBetweenInclusive = (value, first, second) => {
   }
   return value >= first && value <= second;
 }
+
+const NUM_WEEKS = 5 * 6;
 
 export default {
   components: {
@@ -48,7 +50,7 @@ export default {
   }),
   computed: {
     visibleAllocations() {
-      return this.project.allocations.slice(0, 5 * 6);
+      return this.project.allocations.slice(0, NUM_WEEKS);
     }
   },
   methods: {
@@ -56,20 +58,37 @@ export default {
       if (this.selectionStartIndex == null) return false;
       return isBetweenInclusive(index, this.selectionStartIndex, this.selectionEndIndex);
     },
-    onMouseDown(allocation, index) {
+    computeAllocationSelectorStyle() {
+      const wrapperWidth = this.$refs.wrapper.offsetWidth;
+      const allocationBlockWidth = wrapperWidth / NUM_WEEKS;
+      if (this.selectionStartIndex > this.selectionEndIndex) {
+        return { left: `${allocationBlockWidth * this.selectionEndIndex}px` };
+      }
+      return { right: `${(NUM_WEEKS - this.selectionEndIndex - 1) * allocationBlockWidth}px` };
+    },
+    onMouseDown(event, allocation, index) {
+      event.preventDefault();
+
       this.selectionStartIndex = index;
       this.selectionEndIndex = index;
 
+      const wrapperBoundingRect = this.$refs.wrapper.getBoundingClientRect();
+      const wrapperLeft = wrapperBoundingRect.left;
+      const wrapperWidth = wrapperBoundingRect.right - wrapperBoundingRect.left;
+      const allocationBlockWidth = wrapperWidth / NUM_WEEKS;
+
+      const onMouseMove = event => {
+        const pos = Math.floor((event.screenX - wrapperLeft) / allocationBlockWidth);
+        this.selectionEndIndex = pos;
+      }
+      window.addEventListener('mousemove', onMouseMove);
+
       const onMouseUp = () => {
         this.selected = true;
+        window.removeEventListener('mousemove', onMouseMove);
         window.removeEventListener('mouseup', onMouseUp);
       }
       window.addEventListener('mouseup', onMouseUp);
-    },
-    onMouseOver(allocation, index) {
-      if (this.selectionStartIndex != null) {
-        this.selectionEndIndex = index
-      }
     },
     onDisbandAllocationSelector() {
       this.selectionStartIndex = null;

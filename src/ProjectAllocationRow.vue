@@ -79,7 +79,7 @@ export default {
 
       const onMouseMove = event => {
         const pos = Math.floor((event.screenX - wrapperLeft) / allocationBlockWidth);
-        this.selectionEndIndex = pos;
+        this.selectionEndIndex = Math.max(0, Math.min(pos, NUM_WEEKS - 1));
       }
       window.addEventListener('mousemove', onMouseMove);
 

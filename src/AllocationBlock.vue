@@ -1,4 +1,4 @@
-<template>
+<!--<template>
   <div :class="classes"
     @mouseover="onMouseOver"
     @mousedown="onMouseDown">
@@ -9,10 +9,27 @@
         aria-hidden="true" />
     </div>
   </div>
-</template>
+</template>-->
 
 <script>
+
+const allocationLevel = (allocation) => {
+  if (allocation.percentage <= 30) return 'low';
+  if (allocation.percentage <= 70) return 'medium';
+  if (allocation.percentage <= 100) return 'high';
+  return 'too-high';
+}
+
+const classes = props => ({
+  'allocation-block': true,
+  [`allocation-block--${allocationLevel(props.allocation)}`]: true,
+  'allocation-block--background': props.drawBackground,
+  'allocation-block--allocable': props.allocable,
+  'allocation-block--selected': props.selected
+});
+
 export default {
+  functional: true,
   props: {
     allocation: {
       type: Object,
@@ -29,41 +46,46 @@ export default {
     selected: {
       type: Boolean,
       default: false
+    },
+    onMouseOver: {
+      type: Function,
+      required: false
+    },
+    onMouseDown: {
+      type: Function,
+      required: false
     }
   },
-  computed: {
-    allocationLevel() {
-      if (this.allocation.percentage <= 30) return 'low';
-      if (this.allocation.percentage <= 70) return 'medium';
-      if (this.allocation.percentage <= 100) return 'high';
-      return 'too-high';
-    },
-    classes() {
-      return {
-        'allocation-block': true,
-        [`allocation-block--${this.allocationLevel}`]: true,
-        'allocation-block--background': this.drawBackground,
-        'allocation-block--allocable': this.allocable,
-        'allocation-block--selected': this.selected
-      };
-    }
-  },
-  methods: {
-    onMouseOver() {
-      if (this.allocable) {
-        this.$emit("mouseOver");
+  render(h, context) {
+    const { props } = context;
+
+    const onMouseOver = () => {
+      if (props.allocable && props.onMouseOver) {
+        props.onMouseOver();
       }
-    },
-    onMouseDown() {
-      if (this.allocable) {
-        this.$emit("startDrag");
+    };
+
+    const onMouseDown = () => {
+      if (props.allocable && props.onMouseDown) {
+        props.onMouseDown();
       }
     }
+    return (
+      <div class={classes(props)} onMouseover={onMouseOver} onMousedown={onMouseDown}>
+        <span class="percentage">{props.allocation.percentage}</span>
+        {(props.allocable || props.selected) &&
+          <div class="allocation-selection">
+            <i class="fa fa-plus"
+              aria-hidden="true" />
+          </div>
+        }
+      </div>
+    );
   }
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .allocation-block {
   position: relative;
 
@@ -79,13 +101,13 @@ export default {
 
   color: #30333a;
 
-  .allocation-selector {
+  .allocation-selection {
     display: none;
     position: absolute;
-    top: 3px;
-    right: 3px;
-    bottom: 3px;
-    left: 3px;
+    top: 4px;
+    right: 2px;
+    bottom: 4px;
+    left: 2px;
     border: 1px solid #dde2e8;
     border-radius: 5px;
     background-color: #f1f1f1;
@@ -97,7 +119,7 @@ export default {
       bottom: 0;
       left: 0;
       font-size: 13px;
-      line-height: 34px;
+      line-height: 32px;
       vertical-align: middle;
     }
   }
@@ -106,7 +128,7 @@ export default {
     .percentage {
       display: none;
     }
-    .allocation-selector {
+    .allocation-selection {
       display: block;
     }
   }
@@ -115,7 +137,7 @@ export default {
     .percentage {
       display: none;
     }
-    .allocation-selector {
+    .allocation-selection {
       display: block;
     }
   }

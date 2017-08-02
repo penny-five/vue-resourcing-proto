@@ -4,6 +4,8 @@
       <i :class="toggleClasses"
         aria-hidden="true"
         @click="onToggleExpanded"></i>
+      <img class="user__avatar"
+        :src="user.avatar" />
       <span class="user__name">{{ user.name }}</span>
       <span class="user__title">{{ user.title }}</span>
     </div>
@@ -75,6 +77,14 @@ export default {
         background-color: #def0f9;
       }
     }
+  }
+
+  .user__avatar {
+    float: left;
+    margin: 6px 6px 0 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
   }
 
   .user__name {

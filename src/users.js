@@ -7,6 +7,7 @@ for (let i = 0; i < 300; i += 1) {
     id: faker.random.uuid(),
     name: faker.name.findName(),
     title: faker.name.title(),
+    avatar: faker.image.avatar(),
     projects: [],
     totalAllocations: []
   };

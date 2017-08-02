@@ -6,8 +6,8 @@
         :allocable="!selected"
         :key="allocation.week"
         :selected="isSelected(index)"
-        @startDrag="onStartDrag(allocation, index)"
-        @mouseOver="onMouseOver(allocation, index)"
+        :onMouseDown="() => onMouseDown(allocation, index)"
+        :onMouseOver="() => onMouseOver(allocation, index)"
         v-for="(allocation, index) in visibleAllocations" />
       <AllocationSelector class="allocation-selector"
         @close="onDisbandAllocationSelector"
@@ -56,7 +56,7 @@ export default {
       if (this.selectionStartIndex == null) return false;
       return isBetweenInclusive(index, this.selectionStartIndex, this.selectionEndIndex);
     },
-    onStartDrag(allocation, index) {
+    onMouseDown(allocation, index) {
       this.selectionStartIndex = index;
       this.selectionEndIndex = index;
 

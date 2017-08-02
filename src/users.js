@@ -2,7 +2,7 @@ import faker from "faker";
 
 const users = [];
 
-for (let i = 0; i < 300; i += 1) {
+for (let i = 0; i < 250; i += 1) {
   const user = {
     id: faker.random.uuid(),
     name: faker.name.findName(),

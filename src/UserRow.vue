@@ -58,8 +58,8 @@ export default {
       this.$emit('setAllocation', {
         userId: this.user.id,
         projectId,
-        startWeek,
-        endWeek,
+        startWeek: Math.min(startWeek, endWeek),
+        endWeek: Math.max(startWeek, endWeek),
         percentage
       });
     }

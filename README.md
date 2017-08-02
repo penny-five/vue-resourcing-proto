@@ -1,6 +1,6 @@
 # vueresourcingproto
 
-> A Vue.js project
+> Proto for Vue.js resourcing view. npm install && npm run dev
 
 ## Build Setup
 

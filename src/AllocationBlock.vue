@@ -1,16 +1,3 @@
-<!--<template>
-  <div :class="classes"
-    @mouseover="onMouseOver"
-    @mousedown="onMouseDown">
-    <span class="percentage">{{ allocation.percentage }}</span>
-    <div class="allocation-selector"
-      v-if="allocable || selected">
-      <i class="fa fa-plus"
-        aria-hidden="true" />
-    </div>
-  </div>
-</template>-->
-
 <script>
 
 const allocationLevel = (allocation) => {
